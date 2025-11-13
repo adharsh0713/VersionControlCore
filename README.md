@@ -18,7 +18,7 @@ This project demonstrates how **commits**, **branches**, and **merges** can be s
 ---
 
 ## Project Structure
-
+```
 VersionControlCore/
 │
 ├── include/ # Header files (declarations)
@@ -40,7 +40,7 @@ VersionControlCore/
 ├── main.c # Console-based interface (Controller + View)
 ├── Makefile # Build automation
 └── README.md # Documentation
-
+```
 ---
 
 ## How to Build and Run
