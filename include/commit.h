@@ -1,22 +1,30 @@
 #ifndef COMMIT_H
 #define COMMIT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
+// ----------------------------
+// Commit Node Structure
+// ----------------------------
 typedef struct Commit {
-    int id;
-    char message[100];
-    char timestamp[50];
-    struct Commit *parent1;
-    struct Commit *parent2;  // For merge commits
-    struct Commit *next;     // For undo/redo (optional)
+    int id;                        // Unique commit ID
+    char message[256];             // Commit message
+    char timestamp[64];            // Timestamp string
+    struct Commit *parent;         // Points to previous commit (main parent)
+    struct Commit *mergeParent;    // Used when merges occur
 } Commit;
 
-// Function prototypes
-Commit* createCommit(int id, const char *message, Commit *parent1, Commit *parent2);
-void printCommit(Commit *commit);
+// ----------------------------
+// Commit Function Prototypes
+// ----------------------------
+
+// Allocate and initialize a new commit node
+Commit* createCommit(int id, const char *message, Commit *parent, Commit *mergeParent);
+
+// Generate timestamp for commits
+void generateTimestamp(char *buffer, int size);
+
+// Print commit details (debug / display)
+void printCommit(const Commit *commit);
 
 #endif

@@ -2,43 +2,33 @@
 #include "../include/commit.h"
 #include "../include/repo.h"
 
-// Helper function to avoid visiting same commit twice
+// ----- Check if commit was already printed -----
 int isVisited(int id, int *visited, int count) {
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++) {
         if (visited[i] == id)
             return 1;
+    }
     return 0;
 }
 
-// Recursive DFS visualization
-void displayCommitNode(Commit *commit, int depth) {
-    if (!commit)
-        return;
+// ----- Recursive DFS to print graph -----
+void displayCommitNode(Commit *commit, int depth, int visited[], int *vCount) {
+    if (!commit) return;
 
-    // Indentation for depth
-    for (int i = 0; i < depth; i++)
-        printf("   ");
+    for (int i = 0; i < depth; i++) printf("  ");
 
-    printf("• Commit #%d: %s\n", commit->id, commit->message);
+    printf("Commit %d | %s\n", commit->id, commit->message);
 
-    // If merge commit, show both parents
-    if (commit->parent2) {
-        for (int i = 0; i < depth + 1; i++)
-            printf("   ");
-        printf("↳ Merge parents: #%d and #%d\n",
-               commit->parent1 ? commit->parent1->id : -1,
-               commit->parent2 ? commit->parent2->id : -1);
-    }
+    // main parent
+    if (commit->parent)
+        displayCommitNode(commit->parent, depth + 1, visited, vCount);
 
-    // Recurse on parent(s)
-    if (commit->parent1)
-        displayCommitNode(commit->parent1, depth + 1);
-
-    if (commit->parent2)
-        displayCommitNode(commit->parent2, depth + 1);
+    // merge parent
+    if (commit->mergeParent)
+        displayCommitNode(commit->mergeParent, depth + 1, visited, vCount);
 }
 
-// Main visualization entry
+// ----- Entry point to graph visualization -----
 void displayCommitGraph(Repository *repo) {
     if (!repo || !repo->branches) {
         printf("Repository is empty.\n");
@@ -48,10 +38,17 @@ void displayCommitGraph(Repository *repo) {
     printf("\nCommit Graph Visualization:\n");
 
     Branch *temp = repo->branches;
+
+    // dynamic visited list (worst case = all commits)
+    int visited[1000];
+    int visitedCount = 0;
+
     while (temp != NULL) {
         printf("\nBranch: %s\n", temp->name);
         printf("-----------------------------\n");
-        displayCommitNode(temp->head, 0);
+
+        displayCommitNode(temp->head, 0, visited, &visitedCount);
+
         printf("\n");
         temp = temp->next;
     }

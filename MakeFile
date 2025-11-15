@@ -18,9 +18,9 @@ SRC = src/commit.c \
 all: $(OUT)
 
 $(OUT): $(SRC)
-	@echo "🔧 Compiling Mini Git Simulation..."
+	@echo "Compiling Mini Git Simulation..."
 	$(CC) $(SRC) $(CFLAGS) -o $(OUT)
-	@echo "✅ Build complete! Run './$(OUT)' to start."
+	@echo "Build complete! Run './$(OUT)' to start."
 
 # Run program
 run: $(OUT)
@@ -28,9 +28,9 @@ run: $(OUT)
 
 # Clean up build files
 clean:
-	@echo "🧹 Cleaning up..."
+	@echo "Cleaning up..."
 	rm -f $(OUT)
-	@echo "✅ Clean complete."
+	@echo "Clean complete."
 
 # Phony targets to avoid file name conflicts
 .PHONY: all run clean

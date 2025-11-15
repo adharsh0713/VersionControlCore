@@ -6,12 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// ----------- FUNCTION DECLARATIONS ------------
-
-// Print all commits in a repository (DAG traversal)
+// Print the commit graph for all branches
 void displayCommitGraph(Repository *repo);
 
-// Recursive helper for visualizing commits
-void displayCommitNode(Commit *commit, int depth);
+// Recursive visualization helper
+void displayCommitNode(Commit *commit, int depth, int *visited, int *vCount);
 
 #endif

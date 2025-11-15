@@ -1,49 +1,34 @@
 #include "../include/merge.h"
-#include "../include/commit.h"
-#include "../include/repo.h"
-#include "../include/branch.h"
+#include <stdio.h>
 
-// ---------- CREATE MERGE COMMIT ----------
-Commit* createMergeCommit(Repository *repo, Commit *parent1, Commit *parent2, const char *message) {
-    Commit *mergeCommit = createCommit(repo->commitCount++, message, parent1, parent2);
-    return mergeCommit;
+Commit* createMergeCommit(Repository *repo, const char *message, Commit *parent, Commit *mergeParent) {
+    return createCommit(repo->commitCounter++, message, parent, mergeParent);
 }
 
-// ---------- MERGE BRANCHES ----------
-void mergeBranches(Repository *repo, const char *sourceBranchName, const char *targetBranchName) {
-    if (!repo) {
-        printf("Error: Repository not initialized.\n");
+void mergeBranches(Repository *repo, const char *sourceBranchName) {
+    Branch *src = repo->branches;
+    while (src && strcmp(src->name, sourceBranchName) != 0)
+        src = src->next;
+
+    if (!src) {
+        printf("Branch not found.\n");
         return;
     }
 
-    Branch *source = findBranch(repo, sourceBranchName);
-    Branch *target = findBranch(repo, targetBranchName);
+    Commit *targetHead = repo->currentBranch->head;
+    Commit *sourceHead = src->head;
 
-    if (!source) {
-        printf("Source branch '%s' not found.\n", sourceBranchName);
-        return;
-    }
+    Commit *mergeCommit = createMergeCommit(repo, "Merge commit", targetHead, sourceHead);
 
-    if (!target) {
-        printf("Target branch '%s' not found.\n", targetBranchName);
-        return;
-    }
+    mergeCommit->parent = targetHead;
+    mergeCommit->mergeParent = sourceHead;
 
-    if (source == target) {
-        printf("Cannot merge a branch into itself.\n");
-        return;
-    }
+    repo->currentBranch->head = mergeCommit;
 
-    printf("Merging branch '%s' into '%s'...\n", sourceBranchName, targetBranchName);
-
-    // Create a merge commit that combines both heads
-    Commit *mergeCommit = createMergeCommit(repo, target->head, source->head, "Merge commit between branches");
-
-    target->head = mergeCommit;
-
-    // If current branch is the target, update it too
-    if (repo->currentBranch == target)
-        repo->currentBranch->head = mergeCommit;
-
-    printf("Merge successful! Created commit #%d linking '%s' and '%s'.\n", mergeCommit->id, targetBranchName, sourceBranchName);
+    logJsonEvent(
+        "MERGE",
+        repo->currentBranch->name,
+        "Merged branch",
+        mergeCommit->id
+    );
 }

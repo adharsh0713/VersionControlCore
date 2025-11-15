@@ -1,0 +1,6 @@
+{ "timestamp": "2025-11-15 23:11:04", "event": "REPO_INIT", "branch": "master", "message": "Repository initialized", "commit": -1 }
+{ "timestamp": "2025-11-15 23:11:32", "event": "CREATE_COMMIT", "branch": "master", "message": "\"second commit\"", "commit": 2 }
+{ "event": "branch_create", "branch": "branch1", "commit": 2 }
+{ "event": "branch_switch", "branch": "branch1", "commit": 2 }
+{ "timestamp": "2025-11-15 23:12:52", "event": "CREATE_COMMIT", "branch": "branch1", "message": "\"commit from branch\"", "commit": 3 }
+{ "timestamp": "2025-11-15 23:13:30", "event": "MERGE", "branch": "branch1", "message": "Merged branch", "commit": 4 }

@@ -2,6 +2,21 @@
 #include "../include/repo.h"
 #include "../include/commit.h"
 
+#define LOG_PATH "data/commits.log"
+
+// Internal utility to log events
+void logEvent(const char *eventType, const char *branchName, int commitId) {
+    FILE *f = fopen(LOG_PATH, "a");
+    if (!f) return;
+
+    fprintf(f,
+        "{ \"event\": \"%s\", \"branch\": \"%s\", \"commit\": %d }\n",
+        eventType, branchName, commitId
+    );
+
+    fclose(f);
+}
+
 // ----------- CREATE BRANCH ------------
 void createBranch(Repository *repo, const char *branchName) {
     if (!repo) {
@@ -9,7 +24,6 @@ void createBranch(Repository *repo, const char *branchName) {
         return;
     }
 
-    // Check if branch already exists
     if (findBranch(repo, branchName)) {
         printf("Branch '%s' already exists.\n", branchName);
         return;
@@ -21,7 +35,9 @@ void createBranch(Repository *repo, const char *branchName) {
     newBranch->next = repo->branches;
     repo->branches = newBranch;
 
-    printf("✅ Branch '%s' created at commit #%d.\n", branchName, newBranch->head->id);
+    printf("Branch '%s' created at commit #%d.\n", branchName, newBranch->head->id);
+
+    logEvent("branch_create", branchName, newBranch->head->id);
 }
 
 // ----------- SWITCH BRANCH ------------
@@ -33,12 +49,15 @@ void switchBranch(Repository *repo, const char *branchName) {
 
     Branch *target = findBranch(repo, branchName);
     if (!target) {
-        printf("❌ Branch '%s' not found.\n", branchName);
+        printf("Branch '%s' not found.\n", branchName);
         return;
     }
 
     repo->currentBranch = target;
-    printf("🔀 Switched to branch '%s'.\n", branchName);
+
+    printf("Switched to branch '%s'.\n", branchName);
+
+    logEvent("branch_switch", branchName, target->head->id);
 }
 
 // ----------- LIST BRANCHES ------------
@@ -48,7 +67,8 @@ void listBranches(Repository *repo) {
         return;
     }
 
-    printf("\n📂 Existing Branches:\n");
+    printf("\nExisting Branches:\n");
+
     Branch *temp = repo->branches;
     while (temp != NULL) {
         if (repo->currentBranch == temp)
@@ -72,22 +92,30 @@ void deleteBranch(Repository *repo, const char *branchName) {
 
     while (temp) {
         if (strcmp(temp->name, branchName) == 0) {
+
             if (temp == repo->currentBranch) {
-                printf("❌ Cannot delete the current active branch.\n");
+                printf("Cannot delete the current active branch.\n");
                 return;
             }
+
             if (prev)
                 prev->next = temp->next;
             else
                 repo->branches = temp->next;
 
+            int commitId = temp->head ? temp->head->id : -1;
+
             free(temp);
-            printf("🗑️  Branch '%s' deleted.\n", branchName);
+
+            printf("Branch '%s' deleted.\n", branchName);
+
+            logEvent("branch_delete", branchName, commitId);
             return;
         }
         prev = temp;
         temp = temp->next;
     }
+
     printf("Branch '%s' not found.\n", branchName);
 }
 

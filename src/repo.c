@@ -1,75 +1,84 @@
 #include "../include/repo.h"
-#include "../include/commit.h"
+#include "../include/utils.h"
 
-// ---------- Repository Initialization ----------
+// Initialize Repository
 Repository* initRepository() {
     Repository *repo = (Repository*)malloc(sizeof(Repository));
-    repo->branches = NULL;
-    repo->currentBranch = NULL;
-    repo->commitCount = 0;
+    if (!repo) {
+        printf("Memory error\n");
+        exit(1);
+    }
 
-    // Create master branch
+    repo->allCommits = NULL;
+    repo->branches = NULL;
+    repo->commitCounter = 1;
+
+    // create root commit
+    Commit *root = createCommit(repo->commitCounter++, "Initial commit", NULL, NULL);
+
+    // create master branch
     Branch *master = (Branch*)malloc(sizeof(Branch));
     strcpy(master->name, "master");
-    master->head = createCommit(repo->commitCount++, "Initial commit", NULL, NULL);
+    master->head = root;
     master->next = NULL;
 
     repo->branches = master;
     repo->currentBranch = master;
 
-    printf("Repository initialized with master branch.\n");
+    // add to allCommits list
+    repo->allCommits = root;
+
+    // log initialization 
+    logJsonEvent("REPO_INIT", "master", "Repository initialized", -1);
+
     return repo;
 }
 
-// ---------- Create Branch ----------
-void createBranch(Repository *repo, const char *branchName) {
-    Branch *newBranch = (Branch*)malloc(sizeof(Branch));
-    strcpy(newBranch->name, branchName);
-    newBranch->head = repo->currentBranch->head;  // start from current head
-    newBranch->next = repo->branches;
-    repo->branches = newBranch;
-
-    printf("Branch '%s' created at commit #%d.\n", branchName, newBranch->head->id);
-}
-
-// ---------- Switch Branch ----------
-void switchBranch(Repository *repo, const char *branchName) {
-    Branch *target = findBranch(repo, branchName);
-    if (!target) {
-        printf("Branch '%s' not found.\n", branchName);
+// Create Commit
+void createCommitInRepo(Repository *repo, const char *message) {
+    if (!repo || !repo->currentBranch) {
+        printf("Repository error.\n");
         return;
     }
-    repo->currentBranch = target;
-    printf("Switched to branch '%s'.\n", branchName);
-}
 
-// ---------- Create Commit ----------
-void createCommitInRepo(Repository *repo, const char *message) {
     Commit *parent = repo->currentBranch->head;
-    Commit *newCommit = createCommit(repo->commitCount++, message, parent, NULL);
+    Commit *newCommit = createCommit(repo->commitCounter++, message, parent, NULL);
+
+    // Insert into global commit list
+    newCommit->parent = repo->allCommits;
+    repo->allCommits = newCommit;
+
+    // Update branch head
     repo->currentBranch->head = newCommit;
 
-    printf("Commit #%d created on branch '%s'.\n", newCommit->id, repo->currentBranch->name);
+    printf("✅ Commit created on branch '%s' with ID #%d\n",
+           repo->currentBranch->name, newCommit->id);
+
+    // LOG: Commit created
+    char logEntry[256];
+    snprintf(logEntry, sizeof(logEntry),
+             "Commit #%d created on branch '%s' with message '%s'",
+             newCommit->id, repo->currentBranch->name, message);
+
+    logJsonEvent("CREATE_COMMIT", repo->currentBranch->name, message, newCommit->id);
 }
 
-// ---------- View Commit History ----------
+// View Commit History
 void viewCommitHistory(Repository *repo) {
-    printf("\n--- Commit History for Branch '%s' ---\n", repo->currentBranch->name);
-    Commit *temp = repo->currentBranch->head;
-    while (temp != NULL) {
-        printCommit(temp);
-        temp = temp->parent1; // traverse backward
+    if (!repo || !repo->currentBranch) {
+        printf("Repository not initialized.\n");
+        return;
     }
-    printf("--------------------------------------\n");
-}
 
-// ---------- Find Branch ----------
-Branch* findBranch(Repository *repo, const char *branchName) {
-    Branch *temp = repo->branches;
-    while (temp != NULL) {
-        if (strcmp(temp->name, branchName) == 0)
-            return temp;
-        temp = temp->next;
+    printf("\nCommit History for branch [%s]:\n",
+           repo->currentBranch->name);
+    printf("--------------------------------------\n");
+
+    Commit *current = repo->currentBranch->head;
+    while (current) {
+        printCommit(current);
+        current = current->parent;
     }
-    return NULL;
+
+    printf("--------------------------------------\n");
 }

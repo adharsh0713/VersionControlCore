@@ -18,7 +18,7 @@ void switchBranch(Repository *repo, const char *branchName);
 // List all existing branches
 void listBranches(Repository *repo);
 
-// Delete a branch (optional, to keep structure clean)
+// Delete a branch
 void deleteBranch(Repository *repo, const char *branchName);
 
 // Utility to find branch by name

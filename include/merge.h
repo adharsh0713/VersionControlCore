@@ -11,9 +11,9 @@
 // ----------- FUNCTION DECLARATIONS ------------
 
 // Merge sourceBranch into targetBranch
-void mergeBranches(Repository *repo, const char *sourceBranchName, const char *targetBranchName);
+void mergeBranches(Repository *repo, const char *sourceBranchName);
 
 // Internal helper to create a merge commit node
-Commit* createMergeCommit(Repository *repo, Commit *parent1, Commit *parent2, const char *message);
+Commit* createMergeCommit(Repository *repo, const char *message, Commit *parent, Commit *mergeParent);
 
 #endif
