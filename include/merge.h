@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ----------- FUNCTION DECLARATIONS ------------
+// FUNCTION DECLARATIONS 
 
 // Merge sourceBranch into targetBranch
 void mergeBranches(Repository *repo, const char *sourceBranchName);

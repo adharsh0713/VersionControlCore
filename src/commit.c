@@ -4,9 +4,7 @@
 #include <time.h>
 #include "../include/commit.h"
 
-// ----------------------------------------------------
 // Generate timestamp in "YYYY-MM-DD HH:MM:SS" format
-// ----------------------------------------------------
 void generateTimestamp(char *buffer, int size) {
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
@@ -14,9 +12,7 @@ void generateTimestamp(char *buffer, int size) {
     strftime(buffer, size, "%Y-%m-%d %H:%M:%S", t);
 }
 
-// ----------------------------------------------------
 // Create a new commit node
-// ----------------------------------------------------
 Commit* createCommit(int id, const char *message, Commit *parent, Commit *mergeParent) {
     Commit *newCommit = (Commit*)malloc(sizeof(Commit));
     if (!newCommit) {
@@ -36,9 +32,7 @@ Commit* createCommit(int id, const char *message, Commit *parent, Commit *mergeP
     return newCommit;
 }
 
-// ----------------------------------------------------
 // Print commit details
-// ----------------------------------------------------
 void printCommit(const Commit *commit) {
     if (!commit) return;
 

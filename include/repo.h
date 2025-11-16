@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"   
+#include "utils.h"
 
 typedef struct Branch {
     char name[50];
@@ -28,5 +28,13 @@ void createCommitInRepo(Repository *repo, const char *message);
 
 // Print commit history
 void viewCommitHistory(Repository *repo);
+
+// Revert to commit (hard reset)
+void revertToCommit(Repository *repo, int commitId);
+
+// Load commits from commits log
+void loadRepositoryFromLog(Repository *repo, const char *logFilePath);
+
+Branch* findBranch(Repository *repo, const char *name);
 
 #endif

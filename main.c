@@ -20,17 +20,23 @@ void displayMenu(Repository *repo) {
     printf("5. List Branches\n");
     printf("6. Merge Branches\n");
     printf("7. Visualize Commit Graph\n");
-    printf("8. Exit\n");
+    printf("8. Revert to a Specific Commit\n");
+    printf("9. Exit\n");
     printf("======================================\n");
     printf("Enter your choice: ");
 }
 
 int main() {
+    // Initialize repository
     Repository *repo = initRepository();
+
+    // Load previous commits, branches, merges, and reverts from commits.log
+    loadRepositoryFromLog(repo, "data/commits.log");
+
     int choice;
-    char message[100];
-    char branchName[50];
-    char source[50], target[50];
+    char message[256];
+    char branchName[64];
+    char source[64], target[64];
 
     while (1) {
         displayMenu(repo);
@@ -104,14 +110,26 @@ int main() {
                     break;
                 }
 
-                mergeBranches(repo, source);
+                mergeBranches(repo, source); // merge INTO current branch
                 break;
 
             case 7:
                 displayCommitGraph(repo);
                 break;
 
-            case 8:
+            case 8: {
+                int id;
+                printf("Enter commit ID to revert to: ");
+                if (scanf("%d", &id) != 1) {
+                    printf("Invalid commit ID.\n");
+                    while (getchar() != '\n');
+                    break;
+                }
+                revertToCommit(repo, id);
+                break;
+            }
+
+            case 9:
                 printf("\nExiting Mini Git Simulation... Goodbye!\n");
                 exit(0);
 

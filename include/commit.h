@@ -3,9 +3,7 @@
 
 #include <time.h>
 
-// ----------------------------
 // Commit Node Structure
-// ----------------------------
 typedef struct Commit {
     int id;                        // Unique commit ID
     char message[256];             // Commit message
@@ -14,10 +12,7 @@ typedef struct Commit {
     struct Commit *mergeParent;    // Used when merges occur
 } Commit;
 
-// ----------------------------
 // Commit Function Prototypes
-// ----------------------------
-
 // Allocate and initialize a new commit node
 Commit* createCommit(int id, const char *message, Commit *parent, Commit *mergeParent);
 

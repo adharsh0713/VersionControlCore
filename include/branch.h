@@ -7,8 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ----------- FUNCTION DECLARATIONS ------------
-
+// Function Declarations
 // Create a new branch starting from current head
 void createBranch(Repository *repo, const char *branchName);
 

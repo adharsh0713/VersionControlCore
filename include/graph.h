@@ -10,6 +10,6 @@
 void displayCommitGraph(Repository *repo);
 
 // Recursive visualization helper
-void displayCommitNode(Commit *commit, int depth, int *visited, int *vCount);
+void displayCommitNode(Commit *commit, int depth, int visited[], int *vCount);
 
 #endif

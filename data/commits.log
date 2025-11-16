@@ -4,3 +4,4 @@
 { "event": "branch_switch", "branch": "branch1", "commit": 2 }
 { "timestamp": "2025-11-15 23:12:52", "event": "CREATE_COMMIT", "branch": "branch1", "message": "\"commit from branch\"", "commit": 3 }
 { "timestamp": "2025-11-15 23:13:30", "event": "MERGE", "branch": "branch1", "message": "Merged branch", "commit": 4 }
+{ "timestamp": "2025-11-16 12:13:46", "event": "REVERT", "branch": "master", "message": "Reverted branch 'master' to commit #2", "commit": 2 }

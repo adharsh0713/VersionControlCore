@@ -29,7 +29,7 @@ run: $(OUT)
 # Clean up build files
 clean:
 	@echo "Cleaning up..."
-	rm -f $(OUT)
+	-rm -f $(OUT)
 	@echo "Clean complete."
 
 # Phony targets to avoid file name conflicts
