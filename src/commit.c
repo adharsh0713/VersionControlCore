@@ -16,7 +16,7 @@ void generateTimestamp(char *buffer, int size) {
 Commit* createCommit(int id, const char *message, Commit *parent, Commit *mergeParent) {
     Commit *newCommit = (Commit*)malloc(sizeof(Commit));
     if (!newCommit) {
-        printf("❌ Error: Memory allocation failed for Commit.\n");
+        printf("Error: Memory allocation failed for Commit.\n");
         return NULL;
     }
 

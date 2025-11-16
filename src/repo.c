@@ -120,7 +120,7 @@ void revertToCommit(Repository *repo, int commitId) {
     snprintf(msg, sizeof(msg), "Reverted branch '%s' to commit #%d", branch->name, commitId);
     logJsonEvent("REVERT", branch->name, msg, commitId);
 
-    printf("🔄 Branch '%s' reverted to commit ID %d.\n", branch->name, commitId);
+    printf("Branch '%s' reverted to commit ID %d.\n", branch->name, commitId);
 }
 
 // ----------------- Helper: simple JSON field extractor -----------------
